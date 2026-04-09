@@ -1,6 +1,8 @@
 import java.util.Iterator;
 
 public class MyLinkedList<T> implements MyList<T> {
+
+    // Node
     private class Node {
         T data;
         Node next;
@@ -50,6 +52,94 @@ public class MyLinkedList<T> implements MyList<T> {
         size++;
     }
 
+    private Node getNode(int index) {
+        if (index < 0 || index >= size) {
+            throw new RuntimeException("Index out of bounds: " + index);
+        }
+
+        Node current;
+
+        if (index < size / 2) {
+            current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
+        } else {
+            current = tail;
+            for (int i = size - 1; i > index; i--) {
+                current = current.prev;
+            }
+        }
+
+        return current;
+    }
+
+    @Override
+    public T get(int index) {
+        return getNode(index).data;
+    }
+
+    @Override
+    public T getFirst() {
+        if (head == null) throw new RuntimeException("List is empty");
+        return head.data;
+    }
+
+    @Override
+    public T getLast() {
+        if (tail == null) throw new RuntimeException("List is empty");
+        return tail.data;
+    }
+
+    @Override
+    public void remove(int index) {
+        Node node = getNode(index);
+
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next;
+        }
+
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev;
+        }
+
+        size--;
+    }
+
+    @Override
+    public void removeFirst() {
+        if (head == null) throw new RuntimeException("List is empty");
+
+        head = head.next;
+
+        if (head != null) {
+            head.prev = null;
+        } else {
+            tail = null;
+        }
+
+        size--;
+    }
+
+    @Override
+    public void removeLast() {
+        if (tail == null) throw new RuntimeException("List is empty");
+
+        tail = tail.prev;
+
+        if (tail != null) {
+            tail.next = null;
+        } else {
+            head = null;
+        }
+
+        size--;
+    }
+
     @Override
     public int size() {
         return size;
@@ -57,12 +147,6 @@ public class MyLinkedList<T> implements MyList<T> {
 
     public void set(int index, T item) {}
     public void add(int index, T item) {}
-    public T get(int index) { return null; }
-    public T getFirst() { return null; }
-    public T getLast() { return null; }
-    public void remove(int index) {}
-    public void removeFirst() {}
-    public void removeLast() {}
     public void sort() {}
     public int indexOf(Object object) { return -1; }
     public int lastIndexOf(Object object) { return -1; }
