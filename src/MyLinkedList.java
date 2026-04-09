@@ -2,7 +2,6 @@ import java.util.Iterator;
 
 public class MyLinkedList<T> implements MyList<T> {
 
-    // Node
     private class Node {
         T data;
         Node next;
@@ -54,21 +53,17 @@ public class MyLinkedList<T> implements MyList<T> {
 
     private Node getNode(int index) {
         if (index < 0 || index >= size) {
-            throw new RuntimeException("Index out of bounds: " + index);
+            throw new RuntimeException("Index out of bounds");
         }
 
         Node current;
 
         if (index < size / 2) {
             current = head;
-            for (int i = 0; i < index; i++) {
-                current = current.next;
-            }
+            for (int i = 0; i < index; i++) current = current.next;
         } else {
             current = tail;
-            for (int i = size - 1; i > index; i--) {
-                current = current.prev;
-            }
+            for (int i = size - 1; i > index; i--) current = current.prev;
         }
 
         return current;
@@ -80,64 +75,68 @@ public class MyLinkedList<T> implements MyList<T> {
     }
 
     @Override
-    public T getFirst() {
-        if (head == null) throw new RuntimeException("List is empty");
-        return head.data;
-    }
-
-    @Override
-    public T getLast() {
-        if (tail == null) throw new RuntimeException("List is empty");
-        return tail.data;
-    }
-
-    @Override
     public void remove(int index) {
         Node node = getNode(index);
 
-        if (node.prev != null) {
-            node.prev.next = node.next;
-        } else {
-            head = node.next;
-        }
+        if (node.prev != null) node.prev.next = node.next;
+        else head = node.next;
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
-        } else {
-            tail = node.prev;
-        }
+        if (node.next != null) node.next.prev = node.prev;
+        else tail = node.prev;
 
         size--;
     }
 
     @Override
-    public void removeFirst() {
-        if (head == null) throw new RuntimeException("List is empty");
+    public int indexOf(Object object) {
+        int i = 0;
+        Node current = head;
 
-        head = head.next;
-
-        if (head != null) {
-            head.prev = null;
-        } else {
-            tail = null;
+        while (current != null) {
+            if (current.data != null && current.data.equals(object)) {
+                return i;
+            }
+            current = current.next;
+            i++;
         }
 
-        size--;
+        return -1;
     }
 
     @Override
-    public void removeLast() {
-        if (tail == null) throw new RuntimeException("List is empty");
+    public boolean exists(Object object) {
+        return indexOf(object) != -1;
+    }
 
-        tail = tail.prev;
+    @Override
+    public Object[] toArray() {
+        Object[] arr = new Object[size];
+        Node current = head;
+        int i = 0;
 
-        if (tail != null) {
-            tail.next = null;
-        } else {
-            head = null;
+        while (current != null) {
+            arr[i++] = current.data;
+            current = current.next;
         }
 
-        size--;
+        return arr;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void sort() {
+        if (size < 2) return;
+
+        for (Node i = head; i != null; i = i.next) {
+            for (Node j = head; j != null && j.next != null; j = j.next) {
+                Comparable<T> a = (Comparable<T>) j.data;
+                if (a.compareTo(j.next.data) > 0) {
+                    T temp = j.data;
+                    j.data = j.next.data;
+                    j.next.data = temp;
+                }
+            }
+        }
     }
 
     @Override
@@ -147,11 +146,11 @@ public class MyLinkedList<T> implements MyList<T> {
 
     public void set(int index, T item) {}
     public void add(int index, T item) {}
-    public void sort() {}
-    public int indexOf(Object object) { return -1; }
+    public T getFirst() { return null; }
+    public T getLast() { return null; }
+    public void removeFirst() {}
+    public void removeLast() {}
     public int lastIndexOf(Object object) { return -1; }
-    public boolean exists(Object object) { return false; }
-    public Object[] toArray() { return new Object[0]; }
     public void clear() {}
 
     @Override
